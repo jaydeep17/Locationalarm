@@ -33,7 +33,7 @@ public class MainActivity extends ListActivity {
 
 		// Note: comment out the below line after first run, or the alarms will
 		// get inserted @ every run..
-		sqh.insertSomeAlarms();
+		// sqh.insertSomeAlarms();
 
 	}
 

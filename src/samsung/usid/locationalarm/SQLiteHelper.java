@@ -5,8 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
-import android.widget.Toast;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
 
@@ -24,9 +22,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 		String createAlarms = "CREATE TABLE " + Alarms.TABLE_NAME + "("
 				+ Alarms.UID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
 				+ Alarms.TITLE + " VARCHAR(225), " + Alarms.DESC
-				+ " LONGTEXT, " + Alarms.RADIUS + " INTEGER, "
-				+ Alarms.LONGITUDE + " BIGINT, " + Alarms.LATITUDE
-				+ " BIGINT, " + Alarms.SETBY + " VARCHAR(225));";
+				+ " LONGTEXT, " + Alarms.RADIUS + " VARCHAR(4), "
+				+ Alarms.LONGITUDE + " VARCHAR(25), " + Alarms.LATITUDE
+				+ " VARCHAR(25), " + Alarms.SETBY + " VARCHAR(225));";
 		db.execSQL(createAlarms);
 
 		String createFriends = "CREATE TABLE " + Friends.TABLE_NAME + "("
@@ -45,11 +43,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	}
 	
 	// Wrapper of insert
-	public void addAlarm(String title, String desc, int radius, long longitude, long latitude, String setby){
+	public void addAlarm(String title, String desc, String d, String longitude, String latitude, String setby){
 		ContentValues cv = new ContentValues();
 		cv.put(Alarms.TITLE, title);
 		cv.put(Alarms.DESC, desc);
-		cv.put(Alarms.RADIUS, radius);
+		cv.put(Alarms.RADIUS, d);
 		cv.put(Alarms.LONGITUDE, longitude);
 		cv.put(Alarms.LONGITUDE, longitude);
 		cv.put(Alarms.SETBY, setby);
@@ -70,9 +68,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	}
 	
 	public void insertSomeAlarms(){
-		addAlarm("DA-IICT", "Meet Prof. Banerjee regarding USID", 1, 1234567, 1234567, "me");
-		addAlarm("Himalaya Mall", "Buy a Birthday Gift for brother", 1, 1234567, 1234567, "me");
-		addAlarm("Home", "Call Mr. Sam Sung.", 1, 1234567, 1234567, "me");
+		addAlarm("DA-IICT", "Meet Prof. Banerjee regarding USID", "1", "1234567", "1234567", "me");
+		addAlarm("Himalaya Mall", "Buy a Birthday Gift for brother", "1.2", "1234567", "1234567", "me");
+		addAlarm("Home", "Call Mr. Sam Sung.", "1.7", "1234567", "1234567", "me");
 	}
 	
 	public boolean deleteAllAlarms(){

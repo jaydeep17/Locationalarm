@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/radiusLabel"
             android:layout_toLeftOf="@id/kmLabel"
-            android:maxLength="4"
+            android:maxLength="3"
             android:ems="10"
             android:layout_marginRight="10dp"
             android:inputType="numberDecimal" />

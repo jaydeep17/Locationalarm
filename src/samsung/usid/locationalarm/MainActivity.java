@@ -32,7 +32,6 @@ public class MainActivity extends ListActivity {
 		sqh = new SQLiteHelper(this);
 
 		// Use only for debug purpose ...
-
 		if (!sqh.deleteAllAlarms()) {
 			Toast.makeText(this, "Failed removing all alarms",
 					Toast.LENGTH_LONG).show();
@@ -44,6 +43,7 @@ public class MainActivity extends ListActivity {
 
 	}
 
+	//The below class fetches the data from the local db (SQLite)
 	class PopulateListView extends AsyncTask<String, String, String> {
 		// TODO Auto-generated method stub
 
@@ -103,8 +103,17 @@ public class MainActivity extends ListActivity {
 									.getItemAtPosition(position);
 							String title = csr.getString(csr
 									.getColumnIndex(Alarms.TITLE));
-							Toast.makeText(MainActivity.this, title,
-									Toast.LENGTH_SHORT).show();
+							String desc = csr.getString(csr.getColumnIndex(Alarms.DESC));
+							//float longitude = csr.getFloat(csr.getColumnIndex(Alarms.LONGITUDE));
+							//float latitude = csr.getFloat(csr.getColumnIndex(Alarms.LATITUDE));
+							String radius = csr.getString(csr.getColumnIndex(Alarms.RADIUS));
+							Intent intent = new Intent(getApplicationContext(),AlarmDetails.class);
+							intent.putExtra("title", title);
+							intent.putExtra("desc", desc);
+							//intent.putExtra("longitude", longitude);
+							//intent.putExtra("latitude", latitude);
+							intent.putExtra("radius", radius);
+							startActivity(intent);
 						}
 					});
 				}
@@ -124,12 +133,6 @@ public class MainActivity extends ListActivity {
 		// TODO Auto-generated method stub
 		super.onResume();
 		new PopulateListView().execute();
-	}
-
-	public void addNewAlarm(View v) {
-		Toast.makeText(this, "Add new Alarm CLicked", Toast.LENGTH_SHORT)
-				.show();
-
 	}
 
 	@Override

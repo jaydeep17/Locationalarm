@@ -31,6 +31,7 @@
             </intent-filter>
         </activity>
         <activity android:label="@string/createalarm" android:name="NewAlarm"></activity>
+        <activity android:name="AlarmDetails" android:label="@string/details"></activity>
     </application>
 
 </manifest>

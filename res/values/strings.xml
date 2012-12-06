@@ -21,5 +21,6 @@
     <string name="create">Create</string>
     <string name="APP_ID">209567229179373</string>
     <string name="createalarm">Create Alarm</string>
+    <string name="details">Details</string>
 
 </resources>

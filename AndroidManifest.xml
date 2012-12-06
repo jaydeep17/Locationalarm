@@ -30,6 +30,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:label="@string/createalarm" android:name="NewAlarm"></activity>
     </application>
 
 </manifest>

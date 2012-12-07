@@ -54,9 +54,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 		this.getWritableDatabase().insert(Alarms.TABLE_NAME, null, cv);
 	}
 	
-	public void deleteAlarm(String title){
-		String[] whereArgs = {title};
-		this.getWritableDatabase().delete(Alarms.TABLE_NAME, Alarms.TITLE + "= ? ", whereArgs);
+	public boolean deleteAlarm(String UID){
+		String[] whereArgs = {UID};
+		int result = this.getWritableDatabase().delete(Alarms.TABLE_NAME, Alarms.UID + "= ? ", whereArgs);
+		return (result != 0);
 	}
 
 	public Cursor fetchAllAlarms(){

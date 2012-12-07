@@ -24,7 +24,7 @@ public class AlarmDetails extends Activity{
 		Bundle extras = intent.getExtras();
 		title.setText(extras.getString("title"));
 		desc.setText(extras.getString("desc"));
-		radius.setText(extras.getString("radius"));
+		radius.setText(extras.getString("radius") + " km");
 	}
 
 }

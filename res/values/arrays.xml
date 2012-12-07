@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="arrayName">
+        <item >2 mins</item>
+        <item >5 mins</item>
+        <item >10 mins</item>
+        <item >15 mins</item>
+        <item >20 mins</item>
+        <item >30 mins</item>
+        <item >45 mins</item>
+        <item >1 hour</item>
+        <item >1.5 hours</item>
+        <item >2 hours</item>
+        <item >3 hours</item>
+    </string-array>
+    <string-array name="arrayValues">
+        <item >2</item>
+        <item >5</item>
+        <item >10</item>
+        <item >15</item>
+        <item >20</item>
+        <item >30</item>
+        <item >45</item>
+        <item >60</item>
+        <item >90</item>
+        <item >120</item>
+        <item >180</item>
+    </string-array>
+    
+</resources>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <RingtonePreference
+        android:key="tone"
+        android:title="Select Tone" />
+
+    <CheckBoxPreference
+        android:key="stoponLow"
+        android:summary="For critical battery situation"
+        android:title="Stop on Low Battery" />
+
+    <ListPreference
+        android:defaultValue="5"
+        android:dialogTitle="Select Snooze time"
+        android:entries="@array/arrayName"
+        android:entryValues="@array/arrayValues"
+        android:key="snooze"
+        android:title="Snooze Time" />
+
+    <Preference
+        android:key="simple"
+        android:title="Account Settings" >
+        <intent
+             android:action="android.intent.action.VIEW"
+             android:targetPackage="samsung.usid.locationalarm"
+             android:targetClass="samsung.usid.locationalarm.LoginActivity" /> 
+    </Preference>
+
+</PreferenceScreen>

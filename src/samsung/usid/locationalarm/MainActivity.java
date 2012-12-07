@@ -32,14 +32,14 @@ public class MainActivity extends ListActivity {
 		sqh = new SQLiteHelper(this);
 
 		// Use only for debug purpose ...
-		if (!sqh.deleteAllAlarms()) {
+/*		if (!sqh.deleteAllAlarms()) {
 			Toast.makeText(this, "Failed removing all alarms",
 					Toast.LENGTH_LONG).show();
 		}
-
+*/
 		// Note: comment out the below line after first run, or the alarms will
 		// get inserted @ every run..
-		sqh.insertSomeAlarms();
+		//sqh.insertSomeAlarms();
 
 	}
 
@@ -59,7 +59,7 @@ public class MainActivity extends ListActivity {
 			pDialog.setMessage("Loading alarms... Please wait...");
 			pDialog.setIndeterminate(false);
 			pDialog.setCancelable(false);
-			pDialog.show();
+			//pDialog.show();
 		}
 
 		@Override
@@ -85,6 +85,9 @@ public class MainActivity extends ListActivity {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
 			pDialog.dismiss();
+			if(c.getCount()==0){
+				return;
+			}
 			runOnUiThread(new Runnable() {
 
 				public void run() {
@@ -148,11 +151,18 @@ public class MainActivity extends ListActivity {
 		// TODO Auto-generated method stub
 		switch (item.getItemId()) {
 		case R.id.menu_add_alarm:
-			startActivity(new Intent(getApplicationContext(), NewAlarm.class));
+			createNewAlarm(null);
+			return true;
+		case R.id.menu_settings:
+			startActivity(new Intent(getApplicationContext(),SettingsActivity.class));
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 
+	}
+	
+	public void createNewAlarm(View v){
+		startActivity(new Intent(getApplicationContext(), NewAlarm.class));
 	}
 }

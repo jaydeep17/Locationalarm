@@ -1,6 +1,7 @@
 package samsung.usid.locationalarm;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -33,6 +34,7 @@ public class NewAlarm extends Activity implements OnClickListener {
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
+		finish();
 	}
 
 	public void onClick(View v) {

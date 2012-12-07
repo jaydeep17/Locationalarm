@@ -16,9 +16,10 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:text="Tap to Add"
-        android:textSize="35dip"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="35sp"
         android:clickable="true"
-        android:onClick="addNewAlarm"
+        android:onClick="createNewAlarm"
         android:visibility="gone" />
 
 </RelativeLayout>

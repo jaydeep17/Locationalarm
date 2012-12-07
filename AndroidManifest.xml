@@ -4,7 +4,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="11"
         android:targetSdkVersion="15" />
 
     <application
@@ -22,16 +22,30 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:label="@string/title_main_activity"
-            android:exported="false" >
+            android:exported="false"
+            android:label="@string/title_main_activity" >
             <intent-filter>
                 <action android:name="samsung.usid.locationalarm.MAINACTIVITY" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:label="@string/createalarm" android:name="NewAlarm"></activity>
-        <activity android:name="AlarmDetails" android:label="@string/details"></activity>
+        <activity
+            android:name="NewAlarm"
+            android:label="@string/createalarm" >
+        </activity>
+        <activity
+            android:name="AlarmDetails"
+            android:label="@string/details" >
+        </activity>
+        <activity
+            android:name="SettingsActivity"
+            android:label="@string/settings" >
+        </activity>
+        <activity
+            android:name="LoginActivity"
+            android:label="@string/sign_in" >
+        </activity>
     </application>
 
 </manifest>

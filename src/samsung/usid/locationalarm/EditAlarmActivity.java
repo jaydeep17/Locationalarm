@@ -49,20 +49,18 @@ public class EditAlarmActivity extends Activity implements OnClickListener{
 		String nTitle = title.getText().toString();
 		String nDesc = desc.getText().toString();
 		String nRadius = radius.getText().toString();
+
 		if(!oTitle.equals(nTitle)){
 			colNames.add(Alarms.TITLE);
 			colValues.add(nTitle);
-			Toast.makeText(this, "title", Toast.LENGTH_SHORT).show();
 		}
 		if(!oDesc.equals(nDesc)){
 			colNames.add(Alarms.DESC);
 			colValues.add(nDesc);
-			Toast.makeText(this, "desc", Toast.LENGTH_SHORT).show();
 		}
 		if(!oRadius.equals(nRadius)){
 			colNames.add(Alarms.RADIUS);
 			colValues.add(nRadius);
-			Toast.makeText(this, "radius", Toast.LENGTH_SHORT).show();
 		}
 		SQLiteHelper sqh = new SQLiteHelper(this);
 		if(sqh.update(UID, colNames, colValues)){
@@ -70,7 +68,17 @@ public class EditAlarmActivity extends Activity implements OnClickListener{
 		} else {
 			Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show();
 		}
-		onBackPressed();
+		
+		Intent intent = new Intent();
+		intent.putExtra("names", colNames);
+		intent.putExtra("values", colValues);
+		if(colNames.size()>0){
+			setResult(RESULT_OK, intent);
+		} else {
+			setResult(RESULT_CANCELED);
+		}
+		
+		finish();
 	}
 
 	

@@ -1,11 +1,12 @@
 package samsung.usid.locationalarm;
 
-import samsung.usid.locationalarm.MainActivity.PopulateListView;
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,6 +17,7 @@ public class AlarmDetails extends Activity{
 
 	TextView title, desc, location, radius, uid;
 	String oTitle, oDesc, oLocation, oRadius, UID;
+	final int REQUEST_CODE = 1; 
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +71,7 @@ public class AlarmDetails extends Activity{
 		intent.putExtra(Alarms.TITLE, oTitle);
 		intent.putExtra(Alarms.DESC, oDesc);
 		intent.putExtra(Alarms.RADIUS, oRadius);
-		startActivity(intent);
+		startActivityForResult(intent,REQUEST_CODE);
 	}
 	
 	private void deleteAlarm(){
@@ -89,4 +91,27 @@ public class AlarmDetails extends Activity{
 		alert.show();
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if(requestCode == REQUEST_CODE){
+			if(resultCode == RESULT_OK){
+				ArrayList<String> names = data.getStringArrayListExtra("names");
+				ArrayList<String> values = data.getStringArrayListExtra("values");
+				for(int i=0;i<names.size();i++){
+					if(names.get(i).equals(Alarms.TITLE)){
+						title.setText(values.get(i));
+					} else if(names.get(i).equals(Alarms.DESC)){
+						desc.setText(values.get(i));
+					} else if(names.get(i).equals(Alarms.RADIUS)){
+						radius.setText(values.get(i));
+					}else if(names.get(i).equals(Alarms.LOCATION)){
+						location.setText(values.get(i));
+					}
+				}
+			}
+		}
+	}
+
+	
 }

@@ -29,9 +29,12 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 	SimpleCursorAdapter simpleAdapter = null;
 	ProgressDialog pDialog;
 	ListView listview;
+	TextView tv;
 
-	public static enum act{VIEW, EDIT};
-	
+	public static enum act {
+		VIEW, EDIT
+	};
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -39,7 +42,7 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 		setContentView(R.layout.alarmslist);
 
 		sqh = new SQLiteHelper(this);
-
+		tv = (TextView) findViewById(R.id.tap_add);
 		// Use only for debug purpose ...
 		/*
 		 * if (!sqh.deleteAllAlarms()) { Toast.makeText(this,
@@ -47,7 +50,7 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 		 */
 		// Note: comment out the below line after first run, or the alarms will
 		// get inserted @ every run..
-		sqh.insertSomeAlarms();
+		// sqh.insertSomeAlarms();
 
 		registerForContextMenu(getListView());
 	}
@@ -68,19 +71,16 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 			pDialog.setMessage("Loading alarms... Please wait...");
 			pDialog.setIndeterminate(false);
 			pDialog.setCancelable(false);
-			// pDialog.show();
+			pDialog.show();
 		}
 
 		@Override
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
 			c = sqh.fetchAllAlarms();
-			TextView tv = (TextView) findViewById(R.id.tap_add);
+
 			if (c.getCount() == 0) {
-				tv.setVisibility(View.VISIBLE);
 				return null;
-			} else {
-				tv.setVisibility(View.GONE);
 			}
 			columns = new String[] { Alarms.UID, Alarms.TITLE, Alarms.DESC,
 					Alarms.RADIUS };
@@ -96,12 +96,20 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 			super.onPostExecute(result);
 			pDialog.dismiss();
 			if (c.getCount() == 0) {
+				runOnUiThread(new Runnable() {
+
+					public void run() {
+						tv.setVisibility(View.VISIBLE);
+						MainActivity.this.getListView().setVisibility(View.GONE);
+					}
+				});
 				return;
 			}
 			runOnUiThread(new Runnable() {
 
 				public void run() {
-					// TODO Auto-generated method stub
+					tv.setVisibility(View.GONE);
+					MainActivity.this.getListView().setVisibility(View.VISIBLE);
 					simpleAdapter = new SimpleCursorAdapter(MainActivity.this,
 							R.layout.alarmslist_entry, c, columns, to, 0);
 					listview = (ListView) findViewById(android.R.id.list);
@@ -173,10 +181,10 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 				.getMenuInfo();
 		switch (item.getItemId()) {
 		case R.id.context_view:
-			viewAlarm(info.position,act.VIEW);
+			viewAlarm(info.position, act.VIEW);
 			break;
 		case R.id.context_edit:
-			viewAlarm(info.position,act.EDIT);
+			viewAlarm(info.position, act.EDIT);
 			break;
 		case R.id.context_delete:
 			deleteAlarm(info.position);
@@ -188,7 +196,7 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 	public void onItemClick(AdapterView<?> listView, View view, int position,
 			long id) {
 		// TODO Auto-generated method stub
-		viewAlarm(position,act.VIEW);
+		viewAlarm(position, act.VIEW);
 	}
 
 	private void viewAlarm(int position, act task) {
@@ -200,12 +208,13 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 		// float latitude = csr.getFloat(csr.getColumnIndex(Alarms.LATITUDE));
 		String radius = csr.getString(csr.getColumnIndex(Alarms.RADIUS));
 		Intent intent;
-		
-		if(task == act.VIEW)
+
+		if (task == act.VIEW)
 			intent = new Intent(getApplicationContext(), AlarmDetails.class);
 		else
-			intent = new Intent(getApplicationContext(), EditAlarmActivity.class);
-		
+			intent = new Intent(getApplicationContext(),
+					EditAlarmActivity.class);
+
 		intent.putExtra(Alarms.UID, UID);
 		intent.putExtra(Alarms.TITLE, title);
 		intent.putExtra(Alarms.DESC, desc);

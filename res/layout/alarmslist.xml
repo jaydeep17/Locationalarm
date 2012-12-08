@@ -20,6 +20,6 @@
         android:textSize="35sp"
         android:clickable="true"
         android:onClick="createNewAlarm"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
 </RelativeLayout>

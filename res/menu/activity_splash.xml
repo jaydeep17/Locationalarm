@@ -2,11 +2,18 @@
 
     <item
         android:id="@+id/menu_add_alarm"
-        android:title="Add Alarm" />
+        android:title="Add Alarm"/>
+    
+    <item
+        android:id="@+id/menu_friends"
+        android:title="Friends">
+    </item>
+    
     <item
         android:id="@+id/menu_settings"
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/menu_settings"/>
+    
 
 </menu>

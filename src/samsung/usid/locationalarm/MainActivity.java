@@ -151,6 +151,8 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 		case R.id.menu_add_alarm:
 			createNewAlarm(null);
 			return true;
+		case R.id.menu_friends:
+			return true;
 		case R.id.menu_settings:
 			startActivity(new Intent(getApplicationContext(),
 					SettingsActivity.class));

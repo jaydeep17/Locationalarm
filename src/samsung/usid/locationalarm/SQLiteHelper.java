@@ -15,7 +15,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
 	public SQLiteHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -56,14 +55,35 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 		this.getWritableDatabase().insert(Alarms.TABLE_NAME, null, cv);
 	}
 	
+	public void addFriend(String name, String email){
+		ContentValues cv = new ContentValues();
+		cv.put(Friends.NAME, name);
+		cv.put(Friends.EMAIL, email);
+		this.getWritableDatabase().insert(Friends.TABLE_NAME,null,cv);
+	}
+	
 	public boolean deleteAlarm(String UID){
 		String[] whereArgs = {UID};
 		int result = this.getWritableDatabase().delete(Alarms.TABLE_NAME, Alarms.UID + "= ? ", whereArgs);
 		return (result != 0);
 	}
+	
+	public boolean deleteFriend(String UID){
+		String[] whereArgs = {UID};
+		int result = this.getWritableDatabase().delete(Friends.TABLE_NAME, Friends.UID + "= ? ", whereArgs);
+		return (result != 0);
+	}
 
 	public Cursor fetchAllAlarms(){
 		Cursor c =this.getWritableDatabase().query(Alarms.TABLE_NAME, new String[]{Alarms.UID, Alarms.TITLE, Alarms.DESC, Alarms.RADIUS}, null, null, null, null, null);
+		if( c != null ){
+			c.moveToFirst();
+		}
+		return c;
+	}
+	
+	public Cursor fetchAllFriends(){
+		Cursor c = this.getWritableDatabase().query(Friends.TABLE_NAME, new String[]{Friends.UID, Friends.NAME, Friends.EMAIL}, null, null, null, null, null);
 		if( c != null ){
 			c.moveToFirst();
 		}
@@ -76,17 +96,35 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 		addAlarm("Home", "Call Mr. Sam Sung.", "1.7", "1234567", "1234567", "me");
 	}
 	
+	public void insertSomeFriends(){
+		addFriend("Jaydeep", "jaydp17@outlook.com");
+		addFriend("Parth","patoliyaparth@gmail.com");
+		addFriend("Parag","sunnydraggon@hotmail.com");
+	}
+	
 	public boolean deleteAllAlarms(){
 		int deleted = this.getWritableDatabase().delete(Alarms.TABLE_NAME, null, null);
 		return deleted>0;
 	}
 	
-	public boolean update(String UID, ArrayList<String> names, ArrayList<String> values){
+	public boolean deleteAllFriends(){
+		int deleted = this.getWritableDatabase().delete(Friends.TABLE_NAME, null, null);
+		return deleted>0;
+	}
+	
+	public boolean updateAlarm(String UID, ArrayList<String> names, ArrayList<String> values){
 		ContentValues args = new ContentValues();
 		for(int i=0;i<names.size();i++){
 			args.put(names.get(i), values.get(i));
 		}
 		int updated = this.getWritableDatabase().update(Alarms.TABLE_NAME, args, Alarms.UID + " = ?", new String[]{UID});
+		return updated==1;
+	}
+	
+	public boolean renameFriend(String UID, String name){
+		ContentValues args = new ContentValues();
+		args.put(Friends.NAME, name);
+		int updated = this.getWritableDatabase().update(Friends.TABLE_NAME, args, Friends.UID + " = ?", new String[]{UID});
 		return updated==1;
 	}
 }

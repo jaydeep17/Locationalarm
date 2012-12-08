@@ -63,7 +63,7 @@ public class EditAlarmActivity extends Activity implements OnClickListener{
 			colValues.add(nRadius);
 		}
 		SQLiteHelper sqh = new SQLiteHelper(this);
-		if(sqh.update(UID, colNames, colValues)){
+		if(sqh.updateAlarm(UID, colNames, colValues)){
 			Toast.makeText(this, "updated", Toast.LENGTH_SHORT).show();
 		} else {
 			Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show();

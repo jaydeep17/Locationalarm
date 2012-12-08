@@ -1,15 +1,28 @@
 package samsung.usid.locationalarm;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.Request.GraphUserCallback;
+import com.facebook.android.Facebook;
+import com.facebook.model.GraphUser;
+
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -27,9 +40,9 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 
 	SQLiteHelper sqh;
 	SimpleCursorAdapter simpleAdapter = null;
-	ProgressDialog pDialog;
 	ListView listview;
 	TextView tv;
+	SharedPreferences sp;
 
 	public static enum act {
 		VIEW, EDIT
@@ -43,6 +56,8 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 
 		sqh = new SQLiteHelper(this);
 		tv = (TextView) findViewById(R.id.tap_add);
+		sp = getSharedPreferences(Globals.PREFS_NAME, Context.MODE_PRIVATE);
+
 		// Use only for debug purpose ...
 		/*
 		 * if (!sqh.deleteAllAlarms()) { Toast.makeText(this,
@@ -62,6 +77,7 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 		Cursor c;
 		String columns[];
 		int[] to;
+		ProgressDialog pDialog;
 
 		@Override
 		protected void onPreExecute() {
@@ -100,7 +116,8 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 
 					public void run() {
 						tv.setVisibility(View.VISIBLE);
-						MainActivity.this.getListView().setVisibility(View.GONE);
+						MainActivity.this.getListView()
+								.setVisibility(View.GONE);
 					}
 				});
 				return;
@@ -126,7 +143,6 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 	protected void onPause() {
 		// TODO Auto-(generated method stub
 		super.onPause();
-		pDialog.dismiss();
 	}
 
 	@Override
@@ -152,6 +168,7 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 			createNewAlarm(null);
 			return true;
 		case R.id.menu_friends:
+			friendsClick();
 			return true;
 		case R.id.menu_settings:
 			startActivity(new Intent(getApplicationContext(),
@@ -184,13 +201,13 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 		switch (item.getItemId()) {
 		case R.id.context_view:
 			viewAlarm(info.position, act.VIEW);
-			break;
+			return true;
 		case R.id.context_edit:
 			viewAlarm(info.position, act.EDIT);
-			break;
+			return true;
 		case R.id.context_delete:
 			deleteAlarm(info.position);
-			break;
+			return true;
 		}
 		return false;
 	}
@@ -243,5 +260,30 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 			}
 		});
 		alert.show();
+	}
+
+	private void friendsClick() {
+		final ProgressDialog pDialog = new ProgressDialog(this);
+		pDialog.setMessage("Checking Login details... Please wait...");
+		pDialog.setIndeterminate(false);
+		pDialog.setCancelable(false);
+		pDialog.show();
+		Session s = new Session(this);
+		try {
+			s.openForRead(getParent());
+		} catch (Exception e) {
+			Log.d("session fb", "caught the exception");
+		} 
+		if (s.isOpened()) {
+			String email = sp.getString(Globals.PREFS_EMAIL, null);
+			String pass = sp.getString(Globals.PREFS_PASS, null);
+			startActivity(new Intent(this,FriendsListActivity.class));
+		} else {
+			Intent intent = new Intent(this, LoginActivity.class);
+			intent.putExtra(Globals.FORWARD, FriendsListActivity.class);
+			startActivity(intent);
+		}
+		pDialog.dismiss();
+
 	}
 }

@@ -27,5 +27,6 @@
     <string name="stopLowBattery">Stop on Low Battery</string>
     <string name="snooze">Snooze Time</string>
     <string name="acsettings">Account Settings</string>
+    <string name="edit">Edit</string>
 
 </resources>

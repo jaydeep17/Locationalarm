@@ -1,5 +1,7 @@
 package samsung.usid.locationalarm;
 
+import java.util.ArrayList;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -77,5 +79,14 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	public boolean deleteAllAlarms(){
 		int deleted = this.getWritableDatabase().delete(Alarms.TABLE_NAME, null, null);
 		return deleted>0;
+	}
+	
+	public boolean update(String UID, ArrayList<String> names, ArrayList<String> values){
+		ContentValues args = new ContentValues();
+		for(int i=0;i<names.size();i++){
+			args.put(names.get(i), values.get(i));
+		}
+		int updated = this.getWritableDatabase().update(Alarms.TABLE_NAME, args, Alarms.UID + " = ?", new String[]{UID});
+		return updated==1;
 	}
 }

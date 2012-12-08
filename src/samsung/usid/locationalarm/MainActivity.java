@@ -30,6 +30,8 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 	ProgressDialog pDialog;
 	ListView listview;
 
+	public static enum act{VIEW, EDIT};
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -171,9 +173,10 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 				.getMenuInfo();
 		switch (item.getItemId()) {
 		case R.id.context_view:
-			viewAlarm(info.position);
+			viewAlarm(info.position,act.VIEW);
 			break;
 		case R.id.context_edit:
+			viewAlarm(info.position,act.EDIT);
 			break;
 		case R.id.context_delete:
 			deleteAlarm(info.position);
@@ -185,22 +188,30 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 	public void onItemClick(AdapterView<?> listView, View view, int position,
 			long id) {
 		// TODO Auto-generated method stub
-		viewAlarm(position);
+		viewAlarm(position,act.VIEW);
 	}
 
-	private void viewAlarm(int position) {
+	private void viewAlarm(int position, act task) {
 		Cursor csr = (Cursor) listview.getItemAtPosition(position);
+		String UID = csr.getString(csr.getColumnIndex(Alarms.UID));
 		String title = csr.getString(csr.getColumnIndex(Alarms.TITLE));
 		String desc = csr.getString(csr.getColumnIndex(Alarms.DESC));
 		// float longitude = csr.getFloat(csr.getColumnIndex(Alarms.LONGITUDE));
 		// float latitude = csr.getFloat(csr.getColumnIndex(Alarms.LATITUDE));
 		String radius = csr.getString(csr.getColumnIndex(Alarms.RADIUS));
-		Intent intent = new Intent(getApplicationContext(), AlarmDetails.class);
-		intent.putExtra("title", title);
-		intent.putExtra("desc", desc);
+		Intent intent;
+		
+		if(task == act.VIEW)
+			intent = new Intent(getApplicationContext(), AlarmDetails.class);
+		else
+			intent = new Intent(getApplicationContext(), EditAlarmActivity.class);
+		
+		intent.putExtra(Alarms.UID, UID);
+		intent.putExtra(Alarms.TITLE, title);
+		intent.putExtra(Alarms.DESC, desc);
 		// intent.putExtra("longitude", longitude);
 		// intent.putExtra("latitude", latitude);
-		intent.putExtra("radius", radius);
+		intent.putExtra(Alarms.RADIUS, radius);
 		startActivity(intent);
 	}
 

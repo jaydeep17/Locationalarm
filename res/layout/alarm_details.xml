@@ -7,6 +7,12 @@
     android:paddingRight="20dp" >
 
     <TextView
+        android:id="@+id/a_d_UID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+    
+    <TextView
         android:id="@+id/titleDetail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -47,6 +47,7 @@
             android:name="LoginActivity"
             android:label="@string/sign_in" >
         </activity>
+        <activity android:label="@string/edit" android:name="EditAlarmActivity"></activity>
     </application>
 
 </manifest>

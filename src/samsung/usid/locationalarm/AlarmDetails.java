@@ -85,7 +85,7 @@ public class AlarmDetails extends Activity{
 				// TODO Auto-generated method stub
 				SQLiteHelper sqh = new SQLiteHelper(AlarmDetails.this);
 				sqh.deleteAlarm(UID);
-				onBackPressed();
+				finish();
 			}
 		});
 		alert.show();

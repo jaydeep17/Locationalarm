@@ -27,10 +27,12 @@
     <string name="stopLowBattery">Stop on Low Battery</string>
     <string name="snooze">Snooze Time</string>
     <string name="acsettings">Account Settings</string>
-    <string name="edit">Edit</string>
+    <string name="edit_friend">Edit Friend</string>
+    <string name="edit_alarm">Edit Alarm</string>
     <string name="friends">My Friends</string>
     <string name="add_friend">Add Friend</string>
     <string name="name_hint">Nick</string>
     <string name="alarms">Alarms</string>
+    <string name="friend_title">Friend Details</string>
 
 </resources>

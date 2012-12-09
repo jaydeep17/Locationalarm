@@ -50,7 +50,7 @@
         </activity>
         <activity
             android:name="EditAlarmActivity"
-            android:label="@string/edit" >
+            android:label="@string/edit_alarm" >
         </activity>
 
         <meta-data
@@ -63,6 +63,8 @@
         </activity>
         <activity android:name="FriendsListActivity" android:label="@string/friends"></activity>
         <activity android:name="NewFriend" android:label="@string/add_friend"></activity>
+        <activity android:name="FriendDetails" android:label="@string/friend_title"></activity>
+        <activity android:name="EditFriendActivity" android:label="@string/edit_friend"></activity>
     </application>
 
 </manifest>

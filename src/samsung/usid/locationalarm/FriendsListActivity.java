@@ -1,8 +1,11 @@
 package samsung.usid.locationalarm;
 
 import samsung.usid.locationalarm.MainActivity.act;
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -14,7 +17,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -22,7 +24,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class FriendsListActivity extends ListActivity implements
-		OnItemClickListener, OnClickListener {
+		OnItemClickListener, View.OnClickListener {
 
 	SQLiteHelper sqh;
 	TextView tv;
@@ -115,7 +117,7 @@ public class FriendsListActivity extends ListActivity implements
 
 	public void onItemClick(AdapterView<?> listView, View view, int position,
 			long id) {
-		
+		viewFriend(position, act.VIEW);
 	}
 
 	public void onClick(View v) {
@@ -156,16 +158,54 @@ public class FriendsListActivity extends ListActivity implements
 				.getMenuInfo();
 		switch (item.getItemId()) {
 		case R.id.context_view:
-			//TODO add View code
+			viewFriend(info.position,act.VIEW);
 			return true;
 		case R.id.context_edit:
-			//TODO add Edit code
+			viewFriend(info.position,act.EDIT);
 			return true;
 		case R.id.context_delete:
-			//TODO add Delete code
+			deleteFriend(info.position);
 			return true;
 		}
 		return false;
 	}
 	
+	public void viewFriend(int position, act task) {
+		Cursor csr = (Cursor) listview.getItemAtPosition(position);
+		String UID = csr.getString(csr.getColumnIndex(Friends.UID));
+		String name = csr.getString(csr.getColumnIndex(Friends.NAME));
+		String email = csr.getString(csr.getColumnIndex(Friends.EMAIL));
+		
+		Intent intent;
+
+		if (task == act.VIEW)
+			intent = new Intent(getApplicationContext(), FriendDetails.class);
+		else
+			intent = new Intent(getApplicationContext(),
+					EditFriendActivity.class);
+
+		intent.putExtra(Friends.UID, UID);
+		intent.putExtra(Friends.NAME, name);
+		intent.putExtra(Friends.EMAIL, email);
+		startActivity(intent);
+	}
+	
+	private void deleteFriend(int position) {
+		Cursor csr = (Cursor) listview.getItemAtPosition(position);
+		final String UID = csr.getString(csr.getColumnIndex(Friends.UID));
+		String name = csr.getString(csr.getColumnIndex(Friends.NAME));
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("Confirm Delete?");
+		alert.setMessage("Are you sure you want to delete \n'" + name + "'?");
+		alert.setNegativeButton("No", null);
+		alert.setPositiveButton("Yes", new OnClickListener() {
+
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				sqh.deleteFriend(UID);
+				new PopulateListView().execute();
+			}
+		});
+		alert.show();
+	}
 }

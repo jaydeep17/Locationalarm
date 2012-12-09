@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="Large Text"
+        android:text="@string/name_hint"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
@@ -35,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="Large Text"
+        android:text="Email"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView

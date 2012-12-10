@@ -201,7 +201,6 @@ public class FriendsListActivity extends ListActivity implements
 		alert.setPositiveButton("Yes", new OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
 				sqh.deleteFriend(UID);
 				new PopulateListView().execute();
 			}

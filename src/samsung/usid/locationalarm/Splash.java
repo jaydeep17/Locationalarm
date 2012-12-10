@@ -20,12 +20,10 @@ public class Splash extends Activity {
 
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				super.run();
 				try {
 					sleep(1000);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				startActivity(new Intent("samsung.usid.locationalarm.MAINACTIVITY"));
@@ -43,7 +41,6 @@ public class Splash extends Activity {
 
 	@Override
 	protected void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
 		finish();
 	}

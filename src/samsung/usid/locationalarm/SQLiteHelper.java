@@ -19,7 +19,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		// TODO Auto-generated method stub
 		String createAlarms = "CREATE TABLE " + Alarms.TABLE_NAME + "("
 				+ Alarms.UID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
 				+ Alarms.TITLE + " VARCHAR(225), " + Alarms.DESC
@@ -37,7 +36,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// TODO Auto-generated method stub
 		db.execSQL("DROP TABLE IF EXISTS "+Alarms.TABLE_NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Friends.TABLE_NAME);
 		onCreate(db);

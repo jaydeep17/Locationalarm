@@ -50,7 +50,6 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.alarmslist);
 
@@ -72,7 +71,6 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 
 	// The below class fetches the data from the local db (SQLite)
 	class PopulateListView extends AsyncTask<String, String, String> {
-		// TODO Auto-generated method stub
 
 		Cursor c;
 		String columns[];
@@ -81,7 +79,6 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 
 		@Override
 		protected void onPreExecute() {
-			// TODO Auto-generated method stub
 			super.onPreExecute();
 			pDialog = new ProgressDialog(MainActivity.this);
 			pDialog.setMessage("Loading alarms... Please wait...");
@@ -92,7 +89,6 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 
 		@Override
 		protected String doInBackground(String... params) {
-			// TODO Auto-generated method stub
 			c = sqh.fetchAllAlarms();
 
 			if (c.getCount() == 0) {
@@ -108,7 +104,6 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 
 		@Override
 		protected void onPostExecute(String result) {
-			// TODO Auto-generated method stub
 			super.onPostExecute(result);
 			pDialog.dismiss();
 			if (c.getCount() == 0) {
@@ -141,20 +136,17 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 
 	@Override
 	protected void onPause() {
-		// TODO Auto-(generated method stub
 		super.onPause();
 	}
 
 	@Override
 	protected void onResume() {
-		// TODO Auto-generated method stub
 		super.onResume();
 		new PopulateListView().execute();
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// TODO Auto-generated method stub
 		MenuInflater mif = getMenuInflater();
 		mif.inflate(R.menu.activity_splash, menu);
 		return super.onCreateOptionsMenu(menu);
@@ -162,7 +154,6 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// TODO Auto-generated method stub
 		switch (item.getItemId()) {
 		case R.id.menu_add_alarm:
 			createNewAlarm(null);
@@ -187,7 +178,6 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
-		// TODO Auto-generated method stub
 		super.onCreateContextMenu(menu, v, menuInfo);
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.main_contextmenu, menu);
@@ -195,7 +185,6 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		// TODO Auto-generated method stub
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 				.getMenuInfo();
 		switch (item.getItemId()) {
@@ -214,7 +203,6 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 
 	public void onItemClick(AdapterView<?> listView, View view, int position,
 			long id) {
-		// TODO Auto-generated method stub
 		viewAlarm(position, act.VIEW);
 	}
 
@@ -254,7 +242,6 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 		alert.setPositiveButton("Yes", new OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
 				sqh.deleteAlarm(UID);
 				new PopulateListView().execute();
 			}

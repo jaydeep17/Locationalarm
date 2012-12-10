@@ -34,5 +34,6 @@
     <string name="name_hint">Nick</string>
     <string name="alarms">Alarms</string>
     <string name="friend_title">Friend Details</string>
+    <string name="sync_interval">Sync Interval</string>
 
 </resources>

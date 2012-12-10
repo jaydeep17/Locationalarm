@@ -21,7 +21,6 @@ public class AlarmDetails extends Activity{
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.alarm_details);
 		
@@ -45,7 +44,6 @@ public class AlarmDetails extends Activity{
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// TODO Auto-generated method stub
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.alarmdetails_menu, menu);
 		return super.onCreateOptionsMenu(menu);
@@ -53,7 +51,6 @@ public class AlarmDetails extends Activity{
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// TODO Auto-generated method stub
 		switch(item.getItemId()){
 		case R.id.ad_edit:
 			editAlarm();
@@ -82,7 +79,6 @@ public class AlarmDetails extends Activity{
 		alert.setPositiveButton("Yes", new OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
 				SQLiteHelper sqh = new SQLiteHelper(AlarmDetails.this);
 				sqh.deleteAlarm(UID);
 				finish();

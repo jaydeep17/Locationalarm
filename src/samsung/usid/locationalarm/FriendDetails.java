@@ -70,7 +70,6 @@ public class FriendDetails extends Activity {
 		alert.setPositiveButton("Yes", new OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
 				SQLiteHelper sqh = new SQLiteHelper(FriendDetails.this);
 				sqh.deleteFriend(UID);
 				finish();
@@ -81,7 +80,6 @@ public class FriendDetails extends Activity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == REQUEST_CODE) {
 			if (resultCode == RESULT_OK) {

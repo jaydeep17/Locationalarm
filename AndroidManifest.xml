@@ -5,7 +5,7 @@
 
     <uses-sdk
         android:minSdkVersion="8"
-        android:targetSdkVersion="15" />
+        android:targetSdkVersion="16" />
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -65,6 +65,7 @@
         <activity android:name="NewFriend" android:label="@string/add_friend"></activity>
         <activity android:name="FriendDetails" android:label="@string/friend_title"></activity>
         <activity android:name="EditFriendActivity" android:label="@string/edit_friend"></activity>
+        <activity android:name="AccountSettingsActivity" android:label="@string/acsettings"></activity>
     </application>
 
 </manifest>

@@ -16,7 +16,6 @@ public class NewAlarm extends Activity implements OnClickListener {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.new_alarm);
 
@@ -31,13 +30,11 @@ public class NewAlarm extends Activity implements OnClickListener {
 
 	@Override
 	protected void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
 		finish();
 	}
 
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
 		sqh = new SQLiteHelper(getApplicationContext());
 		String title = titleField.getText().toString();
 		String desc = descField.getText().toString();

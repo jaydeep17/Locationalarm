@@ -27,4 +27,7 @@
         <item >180</item>
     </string-array>
     
+    <string-array name="ac_settings">
+        <item>Sync Interval</item>
+    </string-array>
 </resources>

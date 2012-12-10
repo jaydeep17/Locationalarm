@@ -19,7 +19,6 @@ public class EditAlarmActivity extends Activity implements OnClickListener{
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.new_alarm);
 		
@@ -43,7 +42,6 @@ public class EditAlarmActivity extends Activity implements OnClickListener{
 	}
 
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
 		ArrayList<String> colNames = new ArrayList<String>();
 		ArrayList<String> colValues = new ArrayList<String>();
 		String nTitle = title.getText().toString();

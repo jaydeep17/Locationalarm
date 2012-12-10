@@ -41,7 +41,6 @@ public class LoginActivity extends FacebookActivity {
 
 	@Override
 	protected void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
 		//finish();
 	}
@@ -67,7 +66,6 @@ public class LoginActivity extends FacebookActivity {
 
 						public void onCompleted(GraphUser user,
 								Response response) {
-							// TODO Auto-generated method stub
 							// Toast.makeText(getApplicationContext(),
 							// user.getFirstName(), Toast.LENGTH_SHORT).show();
 							Log.d("Skeleton", response.toString());
@@ -88,7 +86,6 @@ public class LoginActivity extends FacebookActivity {
 								forwardAction();
 
 							} catch (JSONException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}

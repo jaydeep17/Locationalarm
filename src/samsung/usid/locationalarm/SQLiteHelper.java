@@ -24,7 +24,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 				+ Alarms.TITLE + " VARCHAR(225), " + Alarms.DESC
 				+ " LONGTEXT, " + Alarms.RADIUS + " VARCHAR(4), "
 				+ Alarms.LONGITUDE + " VARCHAR(25), " + Alarms.LATITUDE
-				+ " VARCHAR(25), " + Alarms.SETBY + " VARCHAR(225));";
+				+ " VARCHAR(25), " + Alarms.SETBY + " VARCHAR(30));";
 		db.execSQL(createAlarms);
 
 		String createFriends = "CREATE TABLE " + Friends.TABLE_NAME + "("

@@ -1,23 +1,13 @@
 package samsung.usid.locationalarm;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.facebook.Request;
-import com.facebook.Response;
-import com.facebook.Session;
-import com.facebook.Request.GraphUserCallback;
-import com.facebook.android.Facebook;
-import com.facebook.model.GraphUser;
-
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -34,10 +24,12 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.facebook.Session;
 
 public class MainActivity extends ListActivity implements OnItemClickListener {
 
+	// TODO Create alarm triggering mechanism which is power efficient
 	SQLiteHelper sqh;
 	SimpleCursorAdapter simpleAdapter = null;
 	ListView listview;
@@ -262,6 +254,7 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 			Log.d("session fb", "caught the exception");
 		} 
 		if (s.isOpened()) {
+			// these credentials are stored in SharedPrefs so no need to pass through intent
 			String email = sp.getString(Globals.PREFS_EMAIL, null);
 			String pass = sp.getString(Globals.PREFS_PASS, null);
 			startActivity(new Intent(this,FriendsListActivity.class));

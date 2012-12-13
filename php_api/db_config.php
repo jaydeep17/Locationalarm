@@ -1,0 +1,9 @@
+<?php
+define('DB_USER',"root");
+define('DB_PASSWORD',"urmypass");
+define('DB_DATABASE',"alarmdb");
+define('DB_SERVER',"localhost");
+define('DB_LOGIN',"login");
+define('DB_REGISTER',"register");
+define('DB_SYNC',"sync");
+?>

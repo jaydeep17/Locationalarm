@@ -11,7 +11,6 @@ public class RemoteDB {
 
 	private JSONParser jParser;
 	
-	public static final String URL = "http://10.0.2.2/db_main.php";
 	private final String loginTag = "login";
 	private final String registerTag = "register";
 	
@@ -20,11 +19,11 @@ public class RemoteDB {
 	}
 	
 	public JSONObject loginUser(String email, String password){
-		ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("tag", loginTag));
         params.add(new BasicNameValuePair("email", email));
         params.add(new BasicNameValuePair("password", password));
-        JSONObject json = jParser.makeHttpRequest(URL,"POST", params);
+        JSONObject json = jParser.makeHttpRequest(Globals.URL,"POST", params);
         return json;
 	}
 	
@@ -35,7 +34,9 @@ public class RemoteDB {
         params.add(new BasicNameValuePair("email", email));
         params.add(new BasicNameValuePair("password", password));
  
-        JSONObject json = jParser.makeHttpRequest(URL,"POST", params);
+        JSONObject json = jParser.makeHttpRequest(Globals.URL,"POST", params);
         return json;
     }
+	
+	
 }

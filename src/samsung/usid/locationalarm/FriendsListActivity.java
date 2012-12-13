@@ -1,10 +1,21 @@
 package samsung.usid.locationalarm;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import samsung.usid.locationalarm.MainActivity.act;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.database.Cursor;
@@ -22,14 +33,17 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class FriendsListActivity extends ListActivity implements
 		OnItemClickListener, View.OnClickListener {
 
 	SQLiteHelper sqh;
+	private SharedPreferences sp;
 	TextView tv;
 	ListView listview;
 	SimpleCursorAdapter simpleAdapter = null;
+	JSONParser jParser;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +51,11 @@ public class FriendsListActivity extends ListActivity implements
 		setContentView(R.layout.alarmslist);
 
 		sqh = new SQLiteHelper(this);
+		sp = getSharedPreferences(Globals.PREFS_NAME, Context.MODE_PRIVATE);
 		tv = (TextView) findViewById(R.id.tap_add);
 		tv.setText("No friends found\nTap to Add");
 		tv.setOnClickListener(this);
-		
+
 		registerForContextMenu(getListView());
 	}
 
@@ -49,7 +64,7 @@ public class FriendsListActivity extends ListActivity implements
 		super.onResume();
 		new PopulateListView().execute();
 	}
-	
+
 	// The below class fetches the data from the local db (SQLite)
 	class PopulateListView extends AsyncTask<String, String, String> {
 
@@ -75,8 +90,8 @@ public class FriendsListActivity extends ListActivity implements
 			if (c.getCount() == 0) {
 				return null;
 			}
-			columns = new String[] { Friends.UID, Friends.NAME, Friends.EMAIL};
-			to = new int[] { R.id.alarm_uid, R.id.title_entry, R.id.desc_entry};
+			columns = new String[] { Friends.UID, Friends.NAME, Friends.EMAIL };
+			to = new int[] { R.id.alarm_uid, R.id.title_entry, R.id.desc_entry };
 
 			return null;
 		}
@@ -121,7 +136,7 @@ public class FriendsListActivity extends ListActivity implements
 	}
 
 	public void onClick(View v) {
-		startActivity(new Intent(this,NewFriend.class));
+		startActivity(new Intent(this, NewFriend.class));
 	}
 
 	@Override
@@ -133,17 +148,24 @@ public class FriendsListActivity extends ListActivity implements
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch(item.getItemId()){
+		switch (item.getItemId()) {
 		case R.id.flm_addFriend:
-			startActivity(new Intent(this,NewFriend.class));
+			startActivity(new Intent(this, NewFriend.class));
 			return true;
 		case R.id.flm_sync:
-			//TODO add sync code
+			// TODO add sync code
+
+			// Fixes the sql syntax for alarms added before logging in
+			String tableName = sp.getString(Globals.PREFS_FIXED_EMAIL, "{...}");
+			String jaryString = sqh.getLog().toString()
+					.replace("{...}", tableName);
+
+			new Local2Server().execute(jaryString);
 			return true;
 		}
 		return false;
 	}
-	
+
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
@@ -151,17 +173,17 @@ public class FriendsListActivity extends ListActivity implements
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.main_contextmenu, menu);
 	}
-	
+
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 				.getMenuInfo();
 		switch (item.getItemId()) {
 		case R.id.context_view:
-			viewFriend(info.position,act.VIEW);
+			viewFriend(info.position, act.VIEW);
 			return true;
 		case R.id.context_edit:
-			viewFriend(info.position,act.EDIT);
+			viewFriend(info.position, act.EDIT);
 			return true;
 		case R.id.context_delete:
 			deleteFriend(info.position);
@@ -169,13 +191,13 @@ public class FriendsListActivity extends ListActivity implements
 		}
 		return false;
 	}
-	
+
 	public void viewFriend(int position, act task) {
 		Cursor csr = (Cursor) listview.getItemAtPosition(position);
 		String UID = csr.getString(csr.getColumnIndex(Friends.UID));
 		String name = csr.getString(csr.getColumnIndex(Friends.NAME));
 		String email = csr.getString(csr.getColumnIndex(Friends.EMAIL));
-		
+
 		Intent intent;
 
 		if (task == act.VIEW)
@@ -189,7 +211,7 @@ public class FriendsListActivity extends ListActivity implements
 		intent.putExtra(Friends.EMAIL, email);
 		startActivity(intent);
 	}
-	
+
 	private void deleteFriend(int position) {
 		Cursor csr = (Cursor) listview.getItemAtPosition(position);
 		final String UID = csr.getString(csr.getColumnIndex(Friends.UID));
@@ -206,5 +228,54 @@ public class FriendsListActivity extends ListActivity implements
 			}
 		});
 		alert.show();
+	}
+
+	class Local2Server extends AsyncTask<String, String, String> {
+
+		ProgressDialog pDialog;
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			pDialog = new ProgressDialog(FriendsListActivity.this);
+			pDialog.setMessage("Syncing Database with server... Please wait...");
+			pDialog.setIndeterminate(false);
+			pDialog.setCancelable(false);
+			pDialog.show();
+		}
+
+		@Override
+		protected String doInBackground(String... params) {
+			try {
+				JSONArray jary = new JSONArray(params[0]);
+				jParser = new JSONParser();
+				for (int i = 0; i < jary.length(); i++) {
+					List<NameValuePair> par = new ArrayList<NameValuePair>();
+					par.add(new BasicNameValuePair("tag", "sync"));
+					par.add(new BasicNameValuePair("sync", jary.getString(i)));
+					JSONObject jresponse = jParser.makeHttpRequest(Globals.URL,
+							"POST", par);
+					if (jresponse.getInt("success") == 1) {
+						continue;
+					} else {
+						pDialog.dismiss();
+						Toast.makeText(FriendsListActivity.this,
+								"Error syncing Database with server",
+								Toast.LENGTH_LONG).show();
+						break;
+					}
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+			pDialog.dismiss();
+		}
+
 	}
 }

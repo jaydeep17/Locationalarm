@@ -43,7 +43,7 @@ public class LoginActivity extends FacebookActivity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		//finish();
+		// finish();
 	}
 
 	@Override
@@ -75,7 +75,7 @@ public class LoginActivity extends FacebookActivity {
 								String pass = json.getString("id");
 								String email = json.getString("email");
 								String name = json.getString("name");
-								editor.putString(Globals.NAME,name);
+								editor.putString(Globals.NAME, name);
 								editor.putString(Globals.PREFS_EMAIL, email);
 								editor.putString(Globals.PREFS_PASS, pass);
 								Toast.makeText(getApplicationContext(),
@@ -84,9 +84,9 @@ public class LoginActivity extends FacebookActivity {
 								editor.commit();
 
 								pDialog.dismiss();
-								// TODO add sharedprefs to check if the user is loggin in for the first time
-								boolean isAcCreated = sp.getBoolean(email, false);
-								if(!isAcCreated){
+								boolean isAcCreated = sp.getBoolean(email,
+										false);
+								if (!isAcCreated) {
 									createAccount(name, email, pass);
 								}
 								forwardAction();
@@ -101,18 +101,19 @@ public class LoginActivity extends FacebookActivity {
 		}
 	}
 
-	private void createAccount(String name, String email, String pass){
-		// TODO add SQL Query to create an Account
-		new CreateAccount().execute(name,email,pass);
-		
+	private void createAccount(String name, String email, String pass) {
+		new CreateAccount().execute(name, email, pass);
+
 		// Saves the first time to true for future reference
 		Editor editor = sp.edit();
 		editor.putBoolean(email, true);
 		editor.commit();
 	}
-	
+
 	public void createAccountListener(View v) {
-		//new CreateAccount().execute("Jaydeep","jaydp17@hotmail.com","121324234325345");
+		// new
+		// CreateAccount().execute("Jaydeep","jaydp17@hotmail.com","121324234325345");
+		// startActivity(new Intent(this,FriendsListActivity.class));
 		startActivity(new Intent(this, CreateAccountActivity.class));
 	}
 
@@ -125,33 +126,42 @@ public class LoginActivity extends FacebookActivity {
 		}
 		finish();
 	}
-	
+
 	class CreateAccount extends AsyncTask<String, String, String> {
 
 		ProgressDialog pDialog;
-		
+
 		@Override
 		protected void onPreExecute() {
-			// TODO Auto-generated method stub
 			super.onPreExecute();
 			pDialog = new ProgressDialog(LoginActivity.this);
 			pDialog.setMessage("Registering user... Please wait...");
 			pDialog.setIndeterminate(false);
 			pDialog.setCancelable(false);
-			//pDialog.show();
+			// pDialog.show();
 		}
-		
+
 		@Override
 		protected String doInBackground(String... params) {
 			// params order {name, email, pass}
 			RemoteDB rdb = new RemoteDB();
-			rdb.registerUser(params[0], params[1], params[2]);
+			JSONObject response = rdb.registerUser(params[0], params[1],
+					params[2]);
+			try {
+				String fixed_email = response.getString("fixed_email");
+				if (fixed_email != null && !fixed_email.equals("")) {
+					Editor editor = sp.edit();
+					editor.putString(Globals.PREFS_FIXED_EMAIL, fixed_email);
+					editor.commit();
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
 			return null;
 		}
-		
+
 		@Override
 		protected void onPostExecute(String result) {
-			// TODO Auto-generated method stub
 			super.onPostExecute(result);
 			pDialog.dismiss();
 		}

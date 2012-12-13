@@ -1,9 +1,18 @@
 package samsung.usid.locationalarm;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -12,9 +21,14 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
 	public static final String DATABASE_NAME = "mydb.db";
 	public static final int DATABASE_VERSION = 1;
+	private SharedPreferences sp;
+	private Context context;
 
 	public SQLiteHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+		this.context = context;
+		sp = context.getSharedPreferences(Globals.PREFS_NAME,
+				Context.MODE_PRIVATE);
 	}
 
 	@Override
@@ -23,8 +37,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 				+ Alarms.UID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
 				+ Alarms.TITLE + " VARCHAR(225), " + Alarms.DESC
 				+ " LONGTEXT, " + Alarms.RADIUS + " VARCHAR(4), "
-				+ Alarms.LONGITUDE + " VARCHAR(25), " + Alarms.LATITUDE
-				+ " VARCHAR(25), " + Alarms.SETBY + " VARCHAR(30));";
+				+ Alarms.LOCATION + " VARCHAR(50), " + Alarms.SETBY
+				+ " VARCHAR(30));";
 		db.execSQL(createAlarms);
 
 		String createFriends = "CREATE TABLE " + Friends.TABLE_NAME + "("
@@ -36,93 +50,248 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		db.execSQL("DROP TABLE IF EXISTS "+Alarms.TABLE_NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+Friends.TABLE_NAME);
+		db.execSQL("DROP TABLE IF EXISTS " + Alarms.TABLE_NAME);
+		db.execSQL("DROP TABLE IF EXISTS " + Friends.TABLE_NAME);
 		onCreate(db);
 	}
-	
+
 	// Wrapper of insert
-	public void addAlarm(String title, String desc, String d, String longitude, String latitude, String setby){
-		ContentValues cv = new ContentValues();
-		cv.put(Alarms.TITLE, title);
-		cv.put(Alarms.DESC, desc);
-		cv.put(Alarms.RADIUS, d);
-		cv.put(Alarms.LONGITUDE, longitude);
-		cv.put(Alarms.LONGITUDE, longitude);
-		cv.put(Alarms.SETBY, setby);
-		this.getWritableDatabase().insert(Alarms.TABLE_NAME, null, cv);
-	}
-	
-	public void addFriend(String name, String email){
-		ContentValues cv = new ContentValues();
-		cv.put(Friends.NAME, name);
-		cv.put(Friends.EMAIL, email);
-		this.getWritableDatabase().insert(Friends.TABLE_NAME,null,cv);
-	}
-	
-	public boolean deleteAlarm(String UID){
-		String[] whereArgs = {UID};
-		int result = this.getWritableDatabase().delete(Alarms.TABLE_NAME, Alarms.UID + "= ? ", whereArgs);
-		return (result != 0);
-	}
-	
-	public boolean deleteFriend(String UID){
-		String[] whereArgs = {UID};
-		int result = this.getWritableDatabase().delete(Friends.TABLE_NAME, Friends.UID + "= ? ", whereArgs);
-		return (result != 0);
+	public void addAlarm(String title, String desc, String d, String longitude,
+			String latitude, String setby) {
+		// ContentValues cv = new ContentValues();
+		// cv.put(Alarms.TITLE, title);
+		// cv.put(Alarms.DESC, desc);
+		// cv.put(Alarms.RADIUS, d);
+		// cv.put(Alarms.LONGITUDE, longitude);
+		// cv.put(Alarms.LONGITUDE, longitude);
+		// cv.put(Alarms.SETBY, setby);
+		// this.getWritableDatabase().insert(Alarms.TABLE_NAME, null, cv);
+		String tableName = Alarms.TABLE_NAME;
+		String query = "INSERT INTO " + tableName + "(" + Alarms.TITLE + ", "
+				+ Alarms.DESC + ", " + Alarms.RADIUS + ", " + Alarms.LOCATION
+				+ ", " + Alarms.SETBY + ") VALUES('" + title + "', " + "'"
+				+ desc + "', " + "'" + d + "', " + "'" + longitude + ","
+				+ latitude + "', '" + setby + "');";
+		this.getWritableDatabase().execSQL(query);
+
+		tableName = sp.getString(Globals.PREFS_FIXED_EMAIL, "{...}") + "_alarms";
+		query = "INSERT INTO " + tableName + "(" + Alarms.TITLE + ", "
+				+ Alarms.DESC + ", " + Alarms.RADIUS + ", " + Alarms.LOCATION
+				+ ", " + Alarms.SETBY + ") VALUES('" + title + "', " + "'"
+				+ desc + "', " + "'" + d + "', " + "'" + longitude + ","
+				+ latitude + "', '" + setby + "');";
+		logChanges(query);
 	}
 
-	public Cursor fetchAllAlarms(){
-		Cursor c =this.getWritableDatabase().query(Alarms.TABLE_NAME, new String[]{Alarms.UID, Alarms.TITLE, Alarms.DESC, Alarms.RADIUS}, null, null, null, null, null);
-		if( c != null ){
+	public void addFriend(String name, String email) {
+		// ContentValues cv = new ContentValues();
+		// cv.put(Friends.NAME, name);
+		// cv.put(Friends.EMAIL, email);
+		// this.getWritableDatabase().insert(Friends.TABLE_NAME, null, cv);
+		String tableName = Friends.TABLE_NAME;
+		String query = "INSERT INTO " + tableName + "(" + Friends.NAME + ", "
+				+ Friends.EMAIL + ") VALUES('" + name + "', '" + email + "');";
+		this.getWritableDatabase().execSQL(query);
+		
+		tableName = sp.getString(Globals.PREFS_FIXED_EMAIL, "{...}") + "_friends";
+		query = "INSERT INTO " + tableName + "(" + Friends.NAME + ", "
+				+ Friends.EMAIL + ") VALUES('" + name + "', '" + email + "');";
+		logChanges(query);
+	}
+
+	public void deleteAlarm(String UID) {
+		// String[] whereArgs = { UID };
+		// int result = this.getWritableDatabase().delete(Alarms.TABLE_NAME,
+		// Alarms.UID + "= ? ", whereArgs);
+		String tableName = Alarms.TABLE_NAME;
+		String query = "DELETE FROM " + tableName + " WHERE " + Alarms.UID
+				+ " = " + UID;
+		this.getWritableDatabase().execSQL(query);
+
+		tableName = sp.getString(Globals.PREFS_FIXED_EMAIL, "{...}") + "_alarms";
+		query = "DELETE FROM " + tableName + " WHERE " + Alarms.UID
+				+ " = " + UID;
+		logChanges(query);
+	}
+
+	public void deleteFriend(String UID) {
+		// String[] whereArgs = { UID };
+		// int result = this.getWritableDatabase().delete(Friends.TABLE_NAME,
+		// Friends.UID + "= ? ", whereArgs);
+		String tableName = Friends.TABLE_NAME;
+		String query = "DELETE FROM " + tableName + " WHERE " + Friends.UID
+				+ " = " + UID;
+		this.getWritableDatabase().execSQL(query);
+
+		tableName = sp.getString(Globals.PREFS_FIXED_EMAIL, "{...}") + "_friends";
+		query = "DELETE FROM " + tableName + " WHERE " + Friends.UID
+				+ " = " + UID;
+		logChanges(query);
+	}
+
+	public Cursor fetchAllAlarms() {
+		Cursor c = this.getWritableDatabase().query(
+				Alarms.TABLE_NAME,
+				new String[] { Alarms.UID, Alarms.TITLE, Alarms.DESC,
+						Alarms.RADIUS }, null, null, null, null, null);
+		if (c != null) {
 			c.moveToFirst();
 		}
 		return c;
 	}
-	
-	public Cursor fetchAllFriends(){
-		Cursor c = this.getWritableDatabase().query(Friends.TABLE_NAME, new String[]{Friends.UID, Friends.NAME, Friends.EMAIL}, null, null, null, null, null);
-		if( c != null ){
+
+	public Cursor fetchAllFriends() {
+		Cursor c = this.getWritableDatabase().query(Friends.TABLE_NAME,
+				new String[] { Friends.UID, Friends.NAME, Friends.EMAIL },
+				null, null, null, null, null);
+		if (c != null) {
 			c.moveToFirst();
 		}
 		return c;
 	}
-	
-	public void insertSomeAlarms(){
-		addAlarm("DA-IICT", "Meet Prof. Banerjee regarding USID", "1", "1234567", "1234567", "me");
-		addAlarm("Himalaya Mall", "Buy a Birthday Gift for brother", "1.2", "1234567", "1234567", "me");
-		addAlarm("Home", "Call Mr. Sam Sung.", "1.7", "1234567", "1234567", "me");
+
+	public void insertSomeAlarms() {
+		addAlarm("DA-IICT", "Meet Prof. Banerjee regarding USID", "1",
+				"1234567", "1234567", "me");
+		addAlarm("Himalaya Mall", "Buy a Birthday Gift for brother", "1.2",
+				"1234567", "1234567", "me");
+		addAlarm("Home", "Call Mr. Sam Sung.", "1.7", "1234567", "1234567",
+				"me");
 	}
-	
-	public void insertSomeFriends(){
+
+	public void insertSomeFriends() {
 		addFriend("Jaydeep", "jaydp17@outlook.com");
-		addFriend("Parth","patoliyaparth@gmail.com");
-		addFriend("Parag","sunnydraggon@hotmail.com");
+		addFriend("Parth", "patoliyaparth@gmail.com");
+		addFriend("Parag", "sunnydraggon@hotmail.com");
 	}
-	
-	public boolean deleteAllAlarms(){
-		int deleted = this.getWritableDatabase().delete(Alarms.TABLE_NAME, null, null);
-		return deleted>0;
+
+	public void deleteAllAlarms() {
+		// int deleted = this.getWritableDatabase().delete(Alarms.TABLE_NAME,
+		// null, null);
+		String tableName = Alarms.TABLE_NAME;
+		String query = "DELETE FROM " + tableName;
+		this.getWritableDatabase().execSQL(query);
+
+		tableName = sp.getString(Globals.PREFS_FIXED_EMAIL, "{...}") + "_alarms";
+		query = "DELETE FROM " + tableName;
+		logChanges(query);
 	}
-	
-	public boolean deleteAllFriends(){
-		int deleted = this.getWritableDatabase().delete(Friends.TABLE_NAME, null, null);
-		return deleted>0;
+
+	public void deleteAllFriends() {
+		// int deleted = this.getWritableDatabase().delete(Friends.TABLE_NAME,
+		// null, null);
+		String tableName = Friends.TABLE_NAME;
+		String query = "DELETE FROM " + tableName;
+		this.getWritableDatabase().execSQL(query);
+
+		tableName = sp.getString(Globals.PREFS_FIXED_EMAIL, "{...}") + "_friends";
+		query = "DELETE FROM " + tableName;
+		logChanges(query);
 	}
-	
-	public boolean updateAlarm(String UID, ArrayList<String> names, ArrayList<String> values){
+
+	public boolean updateAlarm(String UID, ArrayList<String> names,
+			ArrayList<String> values) {
+		// TODO updateAlarm sync syntax
 		ContentValues args = new ContentValues();
-		for(int i=0;i<names.size();i++){
+		for (int i = 0; i < names.size(); i++) {
 			args.put(names.get(i), values.get(i));
 		}
-		int updated = this.getWritableDatabase().update(Alarms.TABLE_NAME, args, Alarms.UID + " = ?", new String[]{UID});
-		return updated==1;
+		int updated = this.getWritableDatabase().update(Alarms.TABLE_NAME,
+				args, Alarms.UID + " = ?", new String[] { UID });
+		return updated == 1;
 	}
-	
-	public boolean renameFriend(String UID, String name){
+
+	public boolean renameFriend(String UID, String name) {
+		// TODO updateFriend sync syntax
 		ContentValues args = new ContentValues();
 		args.put(Friends.NAME, name);
-		int updated = this.getWritableDatabase().update(Friends.TABLE_NAME, args, Friends.UID + " = ?", new String[]{UID});
-		return updated==1;
+		int updated = this.getWritableDatabase().update(Friends.TABLE_NAME,
+				args, Friends.UID + " = ?", new String[] { UID });
+		return updated == 1;
+	}
+
+	public void logChanges(String query) {
+
+		FileInputStream fin = null;
+		StringBuilder sb = null;
+		int ch;
+		try {
+			fin = context.openFileInput(Globals.LOGFILE);
+			sb = new StringBuilder();
+			while ((ch = fin.read()) != -1) {
+				sb.append((char) ch);
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		JSONArray jary = null;
+		try {
+			if (sb == null) {
+				jary = new JSONArray();
+			} else {
+				jary = new JSONArray(sb.toString());
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		jary.put(query);
+
+		FileOutputStream fos;
+		try {
+			fos = context.openFileOutput(Globals.LOGFILE, Context.MODE_PRIVATE);
+			fos.write(jary.toString().getBytes());
+			fos.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public void flushLogFile() {
+		FileOutputStream fos;
+		try {
+			fos = context.openFileOutput(Globals.LOGFILE, Context.MODE_PRIVATE);
+			fos.write(null);
+			fos.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public JSONArray getLog() {
+		FileInputStream fin = null;
+		StringBuilder sb = null;
+		int ch;
+		try {
+			fin = context.openFileInput(Globals.LOGFILE);
+			sb = new StringBuilder();
+			while ((ch = fin.read()) != -1) {
+				sb.append((char) ch);
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		JSONArray jary = null;
+		try {
+			if (sb == null) {
+				jary = new JSONArray();
+			} else {
+				jary = new JSONArray(sb.toString());
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return jary;
 	}
 }

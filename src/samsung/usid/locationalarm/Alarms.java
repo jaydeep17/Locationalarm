@@ -11,4 +11,7 @@ public class Alarms {
 	public static final String LATITUDE = "latitude";
 	public static final String SETBY = "set_by";
 	public static final String LOCATION = "location";
+	public static final String CREATED_AT = "created_at";
+	public static final String MODIFIED_AT = "modified_at";
+	public static final String PERMIT_FRIENDS = "permitted_friends";
 }

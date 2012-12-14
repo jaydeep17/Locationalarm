@@ -1,6 +1,15 @@
 package samsung.usid.locationalarm;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -11,6 +20,8 @@ public class NewFriend extends Activity implements OnClickListener{
 	
 	EditText nameField, emailField;
 	Button addButton;
+	JSONParser jParser;
+	SharedPreferences sp;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

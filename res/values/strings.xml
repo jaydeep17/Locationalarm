@@ -10,6 +10,7 @@
     <string name="location_label">Location</string>
     <string name="radius_label">Radius</string>
     <string name="km_label">Km</string>
+    <string name="alarm_for">Alarm For:</string>
     <color name="tap_color">#DBDBDB</color>
     <string name="sign_in">Sign in</string>
     <string name="username">username</string>

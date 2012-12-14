@@ -28,6 +28,9 @@ class DB_Functions {
 	
 	$friend_table = $name . "_friends";
 	$result2 = mysql_query("CREATE TABLE $friend_table(_id int(11) primary key auto_increment, name varchar(225) not null, email varchar(225) not null);");
+	
+	$pf_table = $name . "_pf";
+	$result3 = mysql_query("CREATE TABLE $pf_table(_id int(11) primary key auto_increment, name varchar(225) not null, email varchar(225) not null);");
     }
     
     public function isUserRegistered($email){
@@ -58,6 +61,16 @@ class DB_Functions {
 	} else {
 	    return true;
 	}
+    }
+    
+    public function downloadTable($table_name){
+	$result = mysql_query("SELECT * FROM $table_name");
+	return $result;
+    }
+    
+    public function executeQuery($qry){
+	$result = mysql_query($qry);
+	return $result;
     }
 }
 ?>

@@ -40,8 +40,8 @@
         android:id="@+id/locationField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:enabled="false"
-        android:ems="10" />
+        android:ems="10"
+        android:enabled="false" />
 
     <RelativeLayout
         android:id="@+id/RelativeLayout1"
@@ -69,17 +69,38 @@
             android:layout_centerVertical="true"
             android:text="@string/km_label"
             android:textAppearance="?android:attr/textAppearanceMedium" />
-        
+
         <EditText
             android:id="@+id/radiusField"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/radiusLabel"
-            android:layout_toLeftOf="@id/kmLabel"
-            android:maxLength="3"
-            android:ems="10"
             android:layout_marginRight="10dp"
-            android:inputType="numberDecimal" />
+            android:layout_toLeftOf="@id/kmLabel"
+            android:ems="10"
+            android:inputType="numberDecimal"
+            android:maxLength="3" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/alarm_for"
+            android:layout_centerVertical="true"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <Spinner
+            android:id="@+id/alarmFor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true" />
     </RelativeLayout>
 
     <Button

@@ -66,6 +66,22 @@ if(isset($_POST['tag']) && $_POST['tag'] != ' '){
 	    $response["error"] = 1;
 	}
 	echo json_encode($response);
+    } elseif($tag == DB_DOWNLOAD){
+	$response["success"] = 1;
+	$response["pf"] = array();
+	$result = $db->downloadTable($_POST[DB_DOWNLOAD]);
+	while($row = mysql_fetch_array($result)){
+	    array_push($response["pf"],$row);
+	}
+	echo json_encode($response);
+    } elseif ($tag == DB_HISALARM){
+	$result = $db->executeQuery($_POST[DB_HISALARM]);
+	if($result == false){
+	    $response["error"] = 1;
+	} else {
+	    $response["success"] = 1;
+	}
+	echo json_encode($response);
     } else {
 	echo "INVALID REQUEST";
     }

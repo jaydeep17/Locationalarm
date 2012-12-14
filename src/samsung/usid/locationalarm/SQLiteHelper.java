@@ -1,5 +1,6 @@
 package samsung.usid.locationalarm;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -9,7 +10,6 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -35,10 +35,13 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		String createAlarms = "CREATE TABLE " + Alarms.TABLE_NAME + "("
 				+ Alarms.UID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-				+ Alarms.TITLE + " VARCHAR(225), " + Alarms.DESC
-				+ " LONGTEXT, " + Alarms.RADIUS + " VARCHAR(4), "
+				+ Alarms.TITLE + " VARCHAR(255), " + Alarms.DESC
+				+ " LONGTEXT, " + Alarms.RADIUS + " int(11), "
 				+ Alarms.LOCATION + " VARCHAR(50), " + Alarms.SETBY
-				+ " VARCHAR(30));";
+				+ " VARCHAR(225), " + Alarms.CREATED_AT
+				+ " timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, "
+				+ Alarms.MODIFIED_AT
+				+ " timestamp NOT NULL DEFAULT '0000-00-00 00:00:00');";
 		db.execSQL(createAlarms);
 
 		String createFriends = "CREATE TABLE " + Friends.TABLE_NAME + "("
@@ -46,6 +49,13 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 				+ Friends.NAME + " VARCHAR(225), " + Friends.EMAIL
 				+ " VARCHAR(225));";
 		db.execSQL(createFriends);
+
+		String createPermits = "CREATE TABLE " + PermittedFriends.TABLE_NAME
+				+ "(" + PermittedFriends.UID
+				+ " INTEGER PRIMARY KEY AUTOINCREMENT, "
+				+ PermittedFriends.NAME + " VARCHAR(225), "
+				+ PermittedFriends.EMAIL + " VARCHAR(225));";
+		db.execSQL(createPermits);
 	}
 
 	@Override
@@ -74,7 +84,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 				+ latitude + "', '" + setby + "');";
 		this.getWritableDatabase().execSQL(query);
 
-		tableName = sp.getString(Globals.PREFS_FIXED_EMAIL, "{...}") + "_alarms";
+		tableName = sp.getString(Globals.PREFS_FIXED_EMAIL, "{...}")
+				+ "_alarms";
 		query = "INSERT INTO " + tableName + "(" + Alarms.TITLE + ", "
 				+ Alarms.DESC + ", " + Alarms.RADIUS + ", " + Alarms.LOCATION
 				+ ", " + Alarms.SETBY + ") VALUES('" + title + "', " + "'"
@@ -92,11 +103,21 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 		String query = "INSERT INTO " + tableName + "(" + Friends.NAME + ", "
 				+ Friends.EMAIL + ") VALUES('" + name + "', '" + email + "');";
 		this.getWritableDatabase().execSQL(query);
-		
-		tableName = sp.getString(Globals.PREFS_FIXED_EMAIL, "{...}") + "_friends";
+
+		tableName = sp.getString(Globals.PREFS_FIXED_EMAIL, "{...}")
+				+ "_friends";
 		query = "INSERT INTO " + tableName + "(" + Friends.NAME + ", "
 				+ Friends.EMAIL + ") VALUES('" + name + "', '" + email + "');";
 		logChanges(query);
+	}
+
+	public void addPermittedFriends(int UID, String name, String email) {
+		ContentValues cv = new ContentValues();
+		cv.put(PermittedFriends.UID, UID);
+		cv.put(PermittedFriends.NAME, name);
+		cv.put(PermittedFriends.EMAIL, email);
+		this.getWritableDatabase()
+				.insert(PermittedFriends.TABLE_NAME, null, cv);
 	}
 
 	public void deleteAlarm(String UID) {
@@ -108,9 +129,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 				+ " = " + UID;
 		this.getWritableDatabase().execSQL(query);
 
-		tableName = sp.getString(Globals.PREFS_FIXED_EMAIL, "{...}") + "_alarms";
-		query = "DELETE FROM " + tableName + " WHERE " + Alarms.UID
-				+ " = " + UID;
+		tableName = sp.getString(Globals.PREFS_FIXED_EMAIL, "{...}")
+				+ "_alarms";
+		query = "DELETE FROM " + tableName + " WHERE " + Alarms.UID + " = "
+				+ UID;
 		logChanges(query);
 	}
 
@@ -123,9 +145,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 				+ " = " + UID;
 		this.getWritableDatabase().execSQL(query);
 
-		tableName = sp.getString(Globals.PREFS_FIXED_EMAIL, "{...}") + "_friends";
-		query = "DELETE FROM " + tableName + " WHERE " + Friends.UID
-				+ " = " + UID;
+		tableName = sp.getString(Globals.PREFS_FIXED_EMAIL, "{...}")
+				+ "_friends";
+		query = "DELETE FROM " + tableName + " WHERE " + Friends.UID + " = "
+				+ UID;
 		logChanges(query);
 	}
 
@@ -146,6 +169,20 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 				null, null, null, null, null);
 		if (c != null) {
 			c.moveToFirst();
+		}
+		return c;
+	}
+
+	public Cursor fetchAllPermittedFriends() {
+		Cursor c = this.getWritableDatabase().query(
+				PermittedFriends.TABLE_NAME,
+				new String[] { PermittedFriends.UID, PermittedFriends.NAME,
+						PermittedFriends.EMAIL }, null, null, null,null, null);
+		if ( c != null){
+			c.moveToFirst();
+		}
+		if( c.getCount() == 0){
+			c = null;
 		}
 		return c;
 	}
@@ -172,7 +209,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 		String query = "DELETE FROM " + tableName;
 		this.getWritableDatabase().execSQL(query);
 
-		tableName = sp.getString(Globals.PREFS_FIXED_EMAIL, "{...}") + "_alarms";
+		tableName = sp.getString(Globals.PREFS_FIXED_EMAIL, "{...}")
+				+ "_alarms";
 		query = "DELETE FROM " + tableName;
 		logChanges(query);
 	}
@@ -184,11 +222,16 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 		String query = "DELETE FROM " + tableName;
 		this.getWritableDatabase().execSQL(query);
 
-		tableName = sp.getString(Globals.PREFS_FIXED_EMAIL, "{...}") + "_friends";
+		tableName = sp.getString(Globals.PREFS_FIXED_EMAIL, "{...}")
+				+ "_friends";
 		query = "DELETE FROM " + tableName;
 		logChanges(query);
 	}
 
+	public void deleteAllPermittedFriends(){
+		this.getWritableDatabase().delete(PermittedFriends.TABLE_NAME, null, null);
+	}
+	
 	public boolean updateAlarm(String UID, ArrayList<String> names,
 			ArrayList<String> values) {
 		// TODO updateAlarm sync syntax
@@ -253,17 +296,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	}
 
 	public void flushLogFile() {
-		FileOutputStream fos;
-		try {
-			fos = context.openFileOutput(Globals.LOGFILE, Context.MODE_PRIVATE);
-			fos.write(null);
-			fos.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+		File dir = context.getFilesDir();
+		File file = new File(dir, Globals.LOGFILE);
+		file.delete();
 	}
 
 	public JSONArray getLog() {

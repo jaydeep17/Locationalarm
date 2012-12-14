@@ -22,6 +22,7 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -44,6 +45,7 @@ public class FriendsListActivity extends ListActivity implements
 	ListView listview;
 	SimpleCursorAdapter simpleAdapter = null;
 	JSONParser jParser;
+	ProgressDialog pDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +59,15 @@ public class FriendsListActivity extends ListActivity implements
 		tv.setOnClickListener(this);
 
 		registerForContextMenu(getListView());
+		jParser = new JSONParser();
 	}
 
+	@Override
+	protected void onPause() {
+		super.onPause();
+		pDialog.dismiss();
+	}
+	
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -161,6 +170,7 @@ public class FriendsListActivity extends ListActivity implements
 					.replace("{...}", tableName);
 
 			new Local2Server().execute(jaryString);
+
 			return true;
 		}
 		return false;
@@ -230,9 +240,50 @@ public class FriendsListActivity extends ListActivity implements
 		alert.show();
 	}
 
-	class Local2Server extends AsyncTask<String, String, String> {
+	class getPermittedFriends extends AsyncTask<String, String, String> {
 
-		ProgressDialog pDialog;
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+		}
+
+		@Override
+		protected String doInBackground(String... params) {
+			List<NameValuePair> par = new ArrayList<NameValuePair>();
+			par.add(new BasicNameValuePair("tag", Globals.downloadTag));
+			par.add(new BasicNameValuePair(Globals.downloadTag, sp.getString(
+					Globals.PREFS_FIXED_EMAIL, null) + "_pf"));
+			Log.d("Download tag", sp.getString(
+					Globals.PREFS_FIXED_EMAIL, null));
+			JSONObject response = jParser.makeHttpRequest(Globals.URL, "POST",
+					par);
+			Log.d("JSON download", response.toString());
+			try {
+				JSONArray jary = response.getJSONArray("pf");
+				sqh.deleteAllPermittedFriends();
+				for (int i = 0; i < jary.length(); i++) {
+					sqh.addPermittedFriends(
+							jary.getJSONObject(i).getInt(PermittedFriends.UID),
+							jary.getJSONObject(i).getString(
+									PermittedFriends.NAME),
+							jary.getJSONObject(i).getString(
+									PermittedFriends.EMAIL));
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+			pDialog.dismiss();
+		}
+
+	}
+
+	class Local2Server extends AsyncTask<String, String, String> {
 
 		@Override
 		protected void onPreExecute() {
@@ -248,10 +299,10 @@ public class FriendsListActivity extends ListActivity implements
 		protected String doInBackground(String... params) {
 			try {
 				JSONArray jary = new JSONArray(params[0]);
-				jParser = new JSONParser();
+
 				for (int i = 0; i < jary.length(); i++) {
 					List<NameValuePair> par = new ArrayList<NameValuePair>();
-					par.add(new BasicNameValuePair("tag", "sync"));
+					par.add(new BasicNameValuePair("tag", Globals.syncTag));
 					par.add(new BasicNameValuePair("sync", jary.getString(i)));
 					JSONObject jresponse = jParser.makeHttpRequest(Globals.URL,
 							"POST", par);
@@ -274,7 +325,8 @@ public class FriendsListActivity extends ListActivity implements
 		@Override
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
-			pDialog.dismiss();
+			sqh.flushLogFile();
+			new getPermittedFriends().execute();
 		}
 
 	}

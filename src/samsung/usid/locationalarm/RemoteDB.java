@@ -11,8 +11,8 @@ public class RemoteDB {
 
 	private JSONParser jParser;
 	
-	private final String loginTag = "login";
-	private final String registerTag = "register";
+	
+	
 	
 	public RemoteDB() {
 		jParser = new JSONParser();
@@ -20,7 +20,7 @@ public class RemoteDB {
 	
 	public JSONObject loginUser(String email, String password){
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
-		params.add(new BasicNameValuePair("tag", loginTag));
+		params.add(new BasicNameValuePair("tag", Globals.loginTag));
         params.add(new BasicNameValuePair("email", email));
         params.add(new BasicNameValuePair("password", password));
         JSONObject json = jParser.makeHttpRequest(Globals.URL,"POST", params);
@@ -29,7 +29,7 @@ public class RemoteDB {
 	
 	public JSONObject registerUser(String name, String email, String password){
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair("tag", registerTag));
+        params.add(new BasicNameValuePair("tag", Globals.registerTag));
         params.add(new BasicNameValuePair("name", name));
         params.add(new BasicNameValuePair("email", email));
         params.add(new BasicNameValuePair("password", password));

@@ -30,6 +30,8 @@ import com.facebook.Session;
 public class MainActivity extends ListActivity implements OnItemClickListener {
 
 	// TODO Create alarm triggering mechanism which is power efficient
+	// TODO Handle GCM errors like Service not available, etc.
+	// TODO App reinstall => then sync all the old data back from server
 	SQLiteHelper sqh;
 	SimpleCursorAdapter simpleAdapter = null;
 	ListView listview;
@@ -252,12 +254,13 @@ public class MainActivity extends ListActivity implements OnItemClickListener {
 			s.openForRead(getParent());
 		} catch (Exception e) {
 			Log.d("session fb", "caught the exception");
-		} 
+		}
 		if (s.isOpened()) {
-			// these credentials are stored in SharedPrefs so no need to pass through intent
+			// these credentials are stored in SharedPrefs so no need to pass
+			// through intent
 			String email = sp.getString(Globals.PREFS_EMAIL, null);
 			String pass = sp.getString(Globals.PREFS_PASS, null);
-			startActivity(new Intent(this,FriendsListActivity.class));
+			startActivity(new Intent(this, FriendsListActivity.class));
 		} else {
 			Intent intent = new Intent(this, LoginActivity.class);
 			intent.putExtra(Globals.FORWARD, FriendsListActivity.class);

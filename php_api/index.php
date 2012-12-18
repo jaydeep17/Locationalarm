@@ -74,10 +74,11 @@ if(isset($_POST['tag']) && $_POST['tag'] != ' '){
 	    array_push($response["pf"],$row);
 	}
 	echo json_encode($response);
-    } elseif ($tag == DB_HISALARM){
-	$result = $db->executeQuery($_POST[DB_HISALARM]);
+    } elseif ($tag == DB_HISALARM || $tag == DB_HISPF || $tag == DB_REGIDTAG){
+	$result = $db->executeQuery($_POST[$tag]);
 	if($result == false){
 	    $response["error"] = 1;
+	    echo $_POST[$tag];
 	} else {
 	    $response["success"] = 1;
 	}

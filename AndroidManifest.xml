@@ -7,7 +7,15 @@
         android:minSdkVersion="8"
         android:targetSdkVersion="16" />
 
+    <permission
+        android:name="samsung.usid.locationalarm.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="csamsung.usid.locationalarm.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:icon="@drawable/ic_launcher"
@@ -66,6 +74,18 @@
         <activity android:name="FriendDetails" android:label="@string/friend_title"></activity>
         <activity android:name="EditFriendActivity" android:label="@string/edit_friend"></activity>
         <activity android:name="AccountSettingsActivity" android:label="@string/acsettings"></activity>
+        
+        <receiver
+            android:name="com.google.android.gcm.GCMBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <category android:name="samsung.usid.locationalarm" />
+            </intent-filter>
+        </receiver>
+        <service android:name=".GCMIntentService" />
     </application>
 
 </manifest>

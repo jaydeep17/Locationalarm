@@ -65,7 +65,8 @@ public class FriendsListActivity extends ListActivity implements
 	@Override
 	protected void onPause() {
 		super.onPause();
-		pDialog.dismiss();
+		if(pDialog != null)
+			pDialog.dismiss();
 	}
 	
 	@Override
@@ -240,6 +241,7 @@ public class FriendsListActivity extends ListActivity implements
 		alert.show();
 	}
 
+	// The 'Alarm For :' spinner in the GUI is populated..
 	class getPermittedFriends extends AsyncTask<String, String, String> {
 
 		@Override
@@ -283,6 +285,7 @@ public class FriendsListActivity extends ListActivity implements
 
 	}
 
+	// UP sync : Local SQLite db to the Server MYSQL
 	class Local2Server extends AsyncTask<String, String, String> {
 
 		@Override

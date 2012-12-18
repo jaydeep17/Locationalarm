@@ -24,6 +24,7 @@ import com.facebook.SessionState;
 import com.facebook.Request.GraphUserCallback;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
+import com.google.android.gcm.GCMRegistrar;
 
 public class LoginActivity extends FacebookActivity {
 
@@ -103,6 +104,9 @@ public class LoginActivity extends FacebookActivity {
 
 	private void createAccount(String name, String email, String pass) {
 		new CreateAccount().execute(name, email, pass);
+		GCMRegistrar.checkDevice(this);
+		GCMRegistrar.checkManifest(this);
+		GCMRegistrar.register(getApplicationContext(), Globals.SENDER_ID);
 
 		// Saves the first time to true for future reference
 		Editor editor = sp.edit();
@@ -110,12 +114,22 @@ public class LoginActivity extends FacebookActivity {
 		editor.commit();
 	}
 
+	// Traditional method to register, w/o FB
 	public void createAccountListener(View v) {
-		// new
-		// CreateAccount().execute("Jaydeep","jaydp17@hotmail.com","121324234325345");
-		// startActivity(new Intent(this,FriendsListActivity.class));
-		startActivity(new Intent(this, CreateAccountActivity.class));
+		
+		//startActivity(new Intent(this, CreateAccountActivity.class));
+		
+		Runnable runnable = new Runnable() {
+			
+			public void run() {
+				RemoteDB rdb = new RemoteDB(LoginActivity.this);
+				rdb.updateGCMregId(GCMRegistrar.getRegistrationId(getApplicationContext()));
+			}
+		};
+		new Thread(runnable).start();
 	}
+	
+	
 
 	private void forwardAction() {
 		Class<?> fwd = (Class<?>) getIntent().getSerializableExtra(
@@ -144,7 +158,7 @@ public class LoginActivity extends FacebookActivity {
 		@Override
 		protected String doInBackground(String... params) {
 			// params order {name, email, pass}
-			RemoteDB rdb = new RemoteDB();
+			RemoteDB rdb = new RemoteDB(LoginActivity.this);
 			JSONObject response = rdb.registerUser(params[0], params[1],
 					params[2]);
 			try {

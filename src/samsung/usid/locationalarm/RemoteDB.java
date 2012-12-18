@@ -7,15 +7,20 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
+
 public class RemoteDB {
 
 	private JSONParser jParser;
+	private SharedPreferences sp;
+	private Context context;
 	
 	
-	
-	
-	public RemoteDB() {
+	public RemoteDB(Context context) {
 		jParser = new JSONParser();
+		this.context = context;
 	}
 	
 	public JSONObject loginUser(String email, String password){
@@ -37,6 +42,18 @@ public class RemoteDB {
         JSONObject json = jParser.makeHttpRequest(Globals.URL,"POST", params);
         return json;
     }
+	
+	public JSONObject updateGCMregId(String regId){
+		sp = context.getSharedPreferences(Globals.PREFS_NAME, Context.MODE_PRIVATE);
+		String myEmail = sp.getString(Globals.PREFS_EMAIL, null);
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		String query = "UPDATE users SET gcm_regId='"+regId+"' WHERE email='"+myEmail+"'";
+		Log.d("query", query);
+		params.add(new BasicNameValuePair("tag", Globals.regIdTag));
+		params.add(new BasicNameValuePair(Globals.regIdTag, query));
+		JSONParser jParser = new JSONParser();
+		return jParser.makeHttpRequest(Globals.URL, "POST", params);
+	}
 	
 	
 }

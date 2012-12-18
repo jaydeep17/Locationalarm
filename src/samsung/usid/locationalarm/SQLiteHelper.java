@@ -31,6 +31,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 				Context.MODE_PRIVATE);
 	}
 
+	// 3 tables are created :
+	//   i) Alarms Table
+	//  ii) Friends Table
+	// iii) Permitted Friends Table
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		String createAlarms = "CREATE TABLE " + Alarms.TABLE_NAME + "("
@@ -68,14 +72,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	// Wrapper of insert
 	public void addAlarm(String title, String desc, String d, String longitude,
 			String latitude, String setby) {
-		// ContentValues cv = new ContentValues();
-		// cv.put(Alarms.TITLE, title);
-		// cv.put(Alarms.DESC, desc);
-		// cv.put(Alarms.RADIUS, d);
-		// cv.put(Alarms.LONGITUDE, longitude);
-		// cv.put(Alarms.LONGITUDE, longitude);
-		// cv.put(Alarms.SETBY, setby);
-		// this.getWritableDatabase().insert(Alarms.TABLE_NAME, null, cv);
 		String tableName = Alarms.TABLE_NAME;
 		String query = "INSERT INTO " + tableName + "(" + Alarms.TITLE + ", "
 				+ Alarms.DESC + ", " + Alarms.RADIUS + ", " + Alarms.LOCATION
@@ -111,6 +107,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 		logChanges(query);
 	}
 
+	
+
+	// fetches permitted friends from my alarms table from the server to the
+	// local db, so that the GUI Spinner in "NewAlarm.java" can be populated..
 	public void addPermittedFriends(int UID, String name, String email) {
 		ContentValues cv = new ContentValues();
 		cv.put(PermittedFriends.UID, UID);
@@ -177,11 +177,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 		Cursor c = this.getWritableDatabase().query(
 				PermittedFriends.TABLE_NAME,
 				new String[] { PermittedFriends.UID, PermittedFriends.NAME,
-						PermittedFriends.EMAIL }, null, null, null,null, null);
-		if ( c != null){
+						PermittedFriends.EMAIL }, null, null, null, null, null);
+		if (c != null) {
 			c.moveToFirst();
 		}
-		if( c.getCount() == 0){
+		if (c.getCount() == 0) {
 			c = null;
 		}
 		return c;
@@ -228,10 +228,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 		logChanges(query);
 	}
 
-	public void deleteAllPermittedFriends(){
-		this.getWritableDatabase().delete(PermittedFriends.TABLE_NAME, null, null);
+	public void deleteAllPermittedFriends() {
+		this.getWritableDatabase().delete(PermittedFriends.TABLE_NAME, null,
+				null);
 	}
-	
+
 	public boolean updateAlarm(String UID, ArrayList<String> names,
 			ArrayList<String> values) {
 		// TODO updateAlarm sync syntax

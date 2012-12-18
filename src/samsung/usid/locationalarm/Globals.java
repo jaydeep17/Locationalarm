@@ -14,9 +14,13 @@ public class Globals {
 	
 	public static final String loginTag = "login";
 	public static final String registerTag = "register";
+	public static final String regIdTag ="regIdtag";
 	public static final String syncTag = "sync";
 	public static final String downloadTag = "download";
 	public static final String hisAlarmTag = "hisAlarm";
+	public static final String hisPFTag = "hisPF";
+	
+	public static final String SENDER_ID = "442032442874";
 	
 	public static String fixEmail(String email){
 		return email.replaceAll("[^a-z0-9]", "_");
